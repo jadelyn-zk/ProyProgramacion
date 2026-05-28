@@ -1,12 +1,13 @@
 package es.iesnervion.revista.excepciones;
 
 /**
- * Excepción lanzada cuando la revista excede el límite total de páginas
- * permitido.
+ * Señala que la revista no cumple con el rango permitido de páginas.
  */
 public class LimitePaginasException extends RevistaException {
     /**
-     * @param message Detalle del exceso de páginas.
+     * Crea la excepción con el detalle del desajuste de páginas.
+     *
+     * @param message Descripción concreta del problema de paginación
      */
     public LimitePaginasException(String message) {
         super(message);

@@ -1,11 +1,16 @@
 package es.iesnervion.revista.modelo;
 
+import java.io.Serializable;
 import java.util.Objects;
+
+import es.iesnervion.revista.utilidades.ValidacionDatos;
 
 /**
  * Representa la portada de la revista.
  */
-public class Portada {
+public class Portada implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     // El modelo principal
     private Modelo modelo;
@@ -19,7 +24,7 @@ public class Portada {
     // El diseñador de la ropa
     private Diseñador diseñador;
 
-    // El titular o mensaje central
+    // Titular principal de la portada
     private String titular;
 
     // Ruta a la imagen de portada
@@ -43,12 +48,12 @@ public class Portada {
      */
     public Portada(Modelo modelo, Fotografo fotografo, Maquillador maquillador,
             Diseñador diseñador, String titular, String imagenUrl) {
-        this.modelo = modelo;
-        this.fotografo = fotografo;
-        this.maquillador = maquillador;
-        this.diseñador = diseñador;
-        this.titular = titular;
-        this.imagenUrl = imagenUrl;
+        setModelo(modelo);
+        setFotografo(fotografo);
+        setMaquillador(maquillador);
+        setDiseñador(diseñador);
+        setTitular(titular);
+        setImagenUrl(imagenUrl);
     }
 
     // -- Getters --
@@ -77,39 +82,39 @@ public class Portada {
     }
 
     // -- Setters --
-    public void setModelo(Modelo m) {
-        this.modelo = m;
+    public void setModelo(Modelo modelo) {
+        this.modelo = ValidacionDatos.validarNoNulo(modelo, "El modelo de portada");
     }
 
-    public void setFotografo(Fotografo f) {
-        this.fotografo = f;
+    public void setFotografo(Fotografo fotografo) {
+        this.fotografo = ValidacionDatos.validarNoNulo(fotografo, "El fotógrafo de portada");
     }
 
-    public void setMaquillador(Maquillador mq) {
-        this.maquillador = mq;
+    public void setMaquillador(Maquillador maquillador) {
+        this.maquillador = ValidacionDatos.validarNoNulo(maquillador, "El maquillador de portada");
     }
 
-    public void setDiseñador(Diseñador d) {
-        this.diseñador = d;
+    public void setDiseñador(Diseñador diseñador) {
+        this.diseñador = ValidacionDatos.validarNoNulo(diseñador, "El diseñador de portada");
     }
 
-    public void setTitular(String t) {
-        this.titular = t;
+    public void setTitular(String titular) {
+        this.titular = ValidacionDatos.validarTextoObligatorio(titular, "El titular de portada");
     }
 
-    public void setImagenUrl(String img) {
-        this.imagenUrl = img;
+    public void setImagenUrl(String imagenUrl) {
+        this.imagenUrl = ValidacionDatos.validarTextoObligatorio(imagenUrl, "La imagen de portada");
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o)
+    public boolean equals(Object other) {
+        if (this == other)
             return true;
-        if (o == null || getClass() != o.getClass())
+        if (other == null || getClass() != other.getClass())
             return false;
-        Portada portada = (Portada) o;
-        return Objects.equals(titular, portada.titular) &&
-                Objects.equals(imagenUrl, portada.imagenUrl);
+        Portada otherPortada = (Portada) other;
+        return Objects.equals(titular, otherPortada.titular) &&
+                Objects.equals(imagenUrl, otherPortada.imagenUrl);
     }
 
     @Override

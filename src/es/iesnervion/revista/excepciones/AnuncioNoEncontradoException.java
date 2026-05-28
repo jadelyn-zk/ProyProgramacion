@@ -1,12 +1,13 @@
 package es.iesnervion.revista.excepciones;
 
 /**
- * Excepción lanzada cuando se intenta acceder o borrar un anuncio que no
- * existe.
+ * Se lanza cuando no se encuentra un anuncio que coincida con los criterios indicados.
  */
 public class AnuncioNoEncontradoException extends RevistaException {
     /**
-     * @param message Identificador o marca del anuncio no hallado.
+     * Crea la excepción con el detalle del anuncio que no se ha encontrado.
+     *
+     * @param message Identificador, marca o descripción del anuncio no hallado
      */
     public AnuncioNoEncontradoException(String message) {
         super(message);

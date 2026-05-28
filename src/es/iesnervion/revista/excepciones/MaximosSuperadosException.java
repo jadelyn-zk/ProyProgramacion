@@ -1,12 +1,13 @@
 package es.iesnervion.revista.excepciones;
 
 /**
- * Excepción lanzada cuando se intenta superar el número máximo de elementos
- * permitidos en una sección (ej: demasiados anuncios).
+ * Indica que una sección de la revista ha superado el máximo permitido.
  */
 public class MaximosSuperadosException extends RevistaException {
     /**
-     * @param message Detalle de la sección que ha superado el máximo.
+     * Crea la excepción con la descripción del exceso.
+     *
+     * @param message Descripción de la sección que ha superado el máximo
      */
     public MaximosSuperadosException(String message) {
         super(message);

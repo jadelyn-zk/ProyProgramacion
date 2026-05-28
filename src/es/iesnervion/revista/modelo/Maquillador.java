@@ -2,50 +2,50 @@ package es.iesnervion.revista.modelo;
 
 import java.util.Objects;
 
+import es.iesnervion.revista.utilidades.ValidacionDatos;
+
 /**
  * Representa a un maquillador.
  */
 public class Maquillador extends Persona {
 
-    // En qué tipo de maquillaje se especializa
+    // Tipo de maquillaje en el que se especializa
     private String especialidad;
 
     /**
-     * Constructor vacio.
+     * Constructor por defecto.
      */
     public Maquillador() {
         super();
     }
 
     /**
-     * Constructor completo.
+     * Constructor completo de `Maquillador`.
+     *
+     * @param nombre      Nombre
+     * @param edad        Edad
+     * @param especialidad Especialidad en maquillaje
      */
-    public Maquillador(String dni, String nombre, String tlf, String email, int edad,
+    public Maquillador(String nombre, int edad,
             String especialidad) {
-        super(dni, nombre, tlf, email, edad);
-        this.especialidad = especialidad;
-    }
-
-    // Getters y Setters
-
-    public String getEspecialidad() {
-        return especialidad;
+        super(nombre, edad);
+        setEspecialidad(especialidad);
     }
 
     public void setEspecialidad(String especialidad) {
-        this.especialidad = especialidad;
+        this.especialidad = ValidacionDatos.validarTextoObligatorio(especialidad, "La especialidad");
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o)
+    public boolean equals(Object other) {
+        if (this == other)
             return true;
-        if (!super.equals(o))
+        if (!super.equals(other))
             return false;
-        if (!(o instanceof Maquillador))
+        if (!(other instanceof Maquillador))
             return false;
-        Maquillador m = (Maquillador) o;
-        return Objects.equals(especialidad, m.especialidad);
+        Maquillador otherMaquillador = (Maquillador) other;
+        return Objects.equals(especialidad, otherMaquillador.especialidad);
     }
 
     @Override
@@ -56,8 +56,7 @@ public class Maquillador extends Persona {
     @Override
     public String toString() {
         return "Maquillador{" +
-                "dni='" + getDni() + '\'' +
-                ", nombre='" + getNombre() + '\'' +
+                "nombre='" + getNombre() + '\'' +
                 ", especialidad='" + especialidad + '\'' +
                 '}';
     }

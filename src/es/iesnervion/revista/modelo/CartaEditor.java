@@ -1,20 +1,25 @@
 package es.iesnervion.revista.modelo;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Objects;
 
-/**
- * Representa la carta que escribe el editor al inicio.
- */
-public class CartaEditor {
+import es.iesnervion.revista.utilidades.ValidacionDatos;
 
-    // El editor responsable de la carta
+/**
+ * Carta que escribe el editor al inicio.
+ */
+public class CartaEditor implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    // Editor responsable de la carta
     private Editor editor;
 
-    // El texto de la carta
+    // Texto de la carta
     private String mensaje;
 
-    // Fecha en la que se escribió
+    // Fecha de la carta
     private LocalDate fecha;
 
     /**
@@ -24,19 +29,17 @@ public class CartaEditor {
     }
 
     /**
-     * Constructor con los datos principales.
-     * 
-     * @param editor  El editor autor.
-     * @param mensaje El contenido.
-     * @param fecha   La fecha.
+     * Constructor con los datos de la carta.
+     *
+     * @param editor Editor autor
+     * @param mensaje Contenido de la carta
+     * @param fecha   Fecha de escritura
      */
     public CartaEditor(Editor editor, String mensaje, LocalDate fecha) {
-        this.editor = editor;
-        this.mensaje = mensaje;
-        this.fecha = fecha;
+        setEditor(editor);
+        setMensaje(mensaje);
+        setFecha(fecha);
     }
-
-    // Getters
 
     public Editor getEditor() {
         return editor;
@@ -51,27 +54,27 @@ public class CartaEditor {
     }
 
     public void setEditor(Editor editor) {
-        this.editor = editor;
+        this.editor = ValidacionDatos.validarNoNulo(editor, "El editor de la carta");
     }
 
     public void setMensaje(String mensaje) {
-        this.mensaje = mensaje;
+        this.mensaje = ValidacionDatos.validarTextoObligatorio(mensaje, "El mensaje de la carta");
     }
 
     public void setFecha(LocalDate fecha) {
-        this.fecha = fecha;
+        this.fecha = ValidacionDatos.validarFechaNoNula(fecha, "La fecha de la carta");
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o)
+    public boolean equals(Object other) {
+        if (this == other)
             return true;
-        if (o == null || getClass() != o.getClass())
+        if (other == null || getClass() != other.getClass())
             return false;
-        CartaEditor that = (CartaEditor) o;
-        return Objects.equals(editor, that.editor) &&
-                Objects.equals(mensaje, that.mensaje) &&
-                Objects.equals(fecha, that.fecha);
+        CartaEditor otherCarta = (CartaEditor) other;
+        return Objects.equals(editor, otherCarta.editor) &&
+                Objects.equals(mensaje, otherCarta.mensaje) &&
+                Objects.equals(fecha, otherCarta.fecha);
     }
 
     @Override

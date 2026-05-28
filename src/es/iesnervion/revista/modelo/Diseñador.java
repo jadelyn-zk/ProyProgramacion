@@ -2,15 +2,17 @@ package es.iesnervion.revista.modelo;
 
 import java.util.Objects;
 
+import es.iesnervion.revista.utilidades.ValidacionDatos;
+
 /**
  * Representa a un diseñador de moda.
  */
 public class Diseñador extends Persona {
 
-    // Su estilo al diseñar
+    // Estilo con el que suele diseñar
     private String estilo;
 
-    // Empresa para la que trabaja
+    // Casa actual para la que trabaja
     private String casaActual;
 
     /**
@@ -23,42 +25,31 @@ public class Diseñador extends Persona {
     /**
      * Constructor completo.
      */
-    public Diseñador(String dni, String nombre, String tlf, String email, int edad,
-            String estilo, String casaActual) {
-        super(dni, nombre, tlf, email, edad);
-        this.estilo = estilo;
-        this.casaActual = casaActual;
-    }
-
-    // Getters
-
-    public String getEstilo() {
-        return estilo;
-    }
-
-    public String getCasaActual() {
-        return casaActual;
+    public Diseñador(String nombre, int edad, String estilo, String casaActual) {
+        super(nombre, edad);
+        setEstilo(estilo);
+        setCasaActual(casaActual);
     }
 
     public void setEstilo(String estilo) {
-        this.estilo = estilo;
+        this.estilo = ValidacionDatos.validarTextoObligatorio(estilo, "El estilo");
     }
 
     public void setCasaActual(String casaActual) {
-        this.casaActual = casaActual;
+        this.casaActual = ValidacionDatos.validarTextoObligatorio(casaActual, "La casa actual");
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o)
+    public boolean equals(Object other) {
+        if (this == other)
             return true;
-        if (!super.equals(o))
+        if (!super.equals(other))
             return false;
-        if (!(o instanceof Diseñador))
+        if (!(other instanceof Diseñador))
             return false;
-        Diseñador d = (Diseñador) o;
-        return Objects.equals(estilo, d.estilo) &&
-                Objects.equals(casaActual, d.casaActual);
+        Diseñador otherDiseñador = (Diseñador) other;
+        return Objects.equals(estilo, otherDiseñador.estilo) &&
+            Objects.equals(casaActual, otherDiseñador.casaActual);
     }
 
     @Override
@@ -69,8 +60,7 @@ public class Diseñador extends Persona {
     @Override
     public String toString() {
         return "Diseñador{" +
-                "dni='" + getDni() + '\'' +
-                ", nombre='" + getNombre() + '\'' +
+                "nombre='" + getNombre() + '\'' +
                 ", casaActual='" + casaActual + '\'' +
                 '}';
     }

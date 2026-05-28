@@ -1,25 +1,21 @@
 package es.iesnervion.revista.modelo;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import es.iesnervion.revista.utilidades.ValidacionDatos;
+
 /**
- * Clase principal que gestiona todo el contenido de una revista.
+ * Modelo principal de la revista.
+ * Guarda la portada, la carta del editor y el contenido que se va añadiendo.
  */
-public class Revista {
+public class Revista implements Serializable {
 
-    // El número de esta edición
-    private int numero;
+    private static final long serialVersionUID = 1L;
 
-    // Mes en el que se publica
-    private Mes mes;
-
-    // Año de la edición
-    private int anio;
-
-    // El nombre o título de la revista
-    private String titulo;
+    // (Se elimina mes y año: la revista es única y usa el titular de la portada como identificador)
 
     // Los datos de la portada
     private Portada portada;
@@ -42,31 +38,23 @@ public class Revista {
     }
 
     /**
-     * Constructor con los datos de publicación.
-     */
-    public Revista(int numero, Mes mes, int anio, String titulo) {
-        this.numero = numero;
-        this.mes = mes;
-        this.anio = anio;
-        this.titulo = titulo;
-        this.articulos = new ArrayList<>();
-        this.anuncios = new ArrayList<>();
-    }
-
-    /**
-     * Calcula las páginas de forma automática.
-     * La portada y carta van al principio.
-     * Los artículos y anuncios van después consecutivamente.
+     * Reparte las páginas del contenido.
+     * La portada ocupa la primera y a partir de ahí se asigna el resto.
      */
     public void recalcularPaginas() {
-        int paginaActual = 2; // El contenido "real" empieza en la 2
+        // Reservamos página 1 para la portada y página 2 para la carta del editor.
+        // El contenido (artículos y anuncios) empieza en la página 3 y se
+        // asigna secuencialmente respetando las páginas que ocupe cada elemento.
+        int paginaActual = 3;
 
         for (Articulo a : articulos) {
-            a.setPaginaInicio(paginaActual++);
+            a.setPaginaInicio(paginaActual);
+            paginaActual += a.getPaginasQueOcupa();
         }
 
         for (Anuncio a : anuncios) {
-            a.setPagina(paginaActual++);
+            a.setPagina(paginaActual);
+            paginaActual += a.getPaginasQueOcupa();
         }
     }
 
@@ -76,10 +64,8 @@ public class Revista {
      * @param articulo El artículo a meter.
      */
     public void agregarArticulo(Articulo articulo) {
-        if (articulo != null) {
-            articulos.add(articulo);
-            recalcularPaginas();
-        }
+        articulos.add(ValidacionDatos.validarNoNulo(articulo, "El artículo"));
+        recalcularPaginas();
     }
 
     /**
@@ -88,6 +74,7 @@ public class Revista {
      * @param id El ID del artículo.
      */
     public void eliminarArticulo(int id) {
+        ValidacionDatos.validarEnteroPositivo(id, "El ID del artículo");
         articulos.removeIf(a -> a.getId() == id);
         recalcularPaginas();
     }
@@ -98,10 +85,8 @@ public class Revista {
      * @param anuncio El anuncio a meter.
      */
     public void agregarAnuncio(Anuncio anuncio) {
-        if (anuncio != null) {
-            anuncios.add(anuncio);
-            recalcularPaginas();
-        }
+        anuncios.add(ValidacionDatos.validarNoNulo(anuncio, "El anuncio"));
+        recalcularPaginas();
     }
 
     /**
@@ -110,27 +95,14 @@ public class Revista {
      * @param id El ID del anuncio.
      */
     public void eliminarAnuncio(int id) {
+        ValidacionDatos.validarEnteroPositivo(id, "El ID del anuncio");
         anuncios.removeIf(a -> a.getId() == id);
         recalcularPaginas();
     }
 
     // -- Getters --
 
-    public int getNumero() {
-        return numero;
-    }
-
-    public Mes getMes() {
-        return mes;
-    }
-
-    public int getAnio() {
-        return anio;
-    }
-
-    public String getTitulo() {
-        return titulo;
-    }
+    // No hay getters para mes/anio: atributos eliminados
 
     public Portada getPortada() {
         return portada;
@@ -150,54 +122,58 @@ public class Revista {
 
     // -- Setters --
 
-    public void setNumero(int numero) {
-        this.numero = numero;
-    }
+    // setMes/setAnio eliminados (no aplican)
 
-    public void setMes(Mes mes) {
-        this.mes = mes;
-    }
-
-    public void setAnio(int anio) {
-        this.anio = anio;
-    }
-
-    public void setTitulo(String titulo) {
-        this.titulo = titulo;
-    }
-
-    public void setPortada(Portada p) {
-        this.portada = p;
+    /**
+     * Establece la portada de la revista y recalcula las páginas.
+     *
+     * @param portada Portada válida (no nula)
+     */
+    public void setPortada(Portada portada) {
+        if (portada == null) {
+            this.portada = null;
+            return;
+        }
+        this.portada = ValidacionDatos.validarNoNulo(portada, "La portada");
         recalcularPaginas();
     }
 
-    public void setCartaEditor(CartaEditor c) {
-        this.cartaEditor = c;
+    /**
+     * Establece la carta del editor y recalcula las páginas.
+     *
+     * @param cartaEditor Carta válida (no nula)
+     */
+    public void setCartaEditor(CartaEditor cartaEditor) {
+        if (cartaEditor == null) {
+            this.cartaEditor = null;
+            return;
+        }
+        this.cartaEditor = ValidacionDatos.validarNoNulo(cartaEditor, "La carta del editor");
         recalcularPaginas();
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o)
+    public boolean equals(Object other) {
+        if (this == other)
             return true;
-        if (o == null || getClass() != o.getClass())
+        if (other == null || getClass() != other.getClass())
             return false;
-        Revista revista = (Revista) o;
-        return numero == revista.numero && anio == revista.anio && mes == revista.mes;
+        Revista otherRevista = (Revista) other;
+        return Objects.equals(portada, otherRevista.portada)
+                && Objects.equals(cartaEditor, otherRevista.cartaEditor)
+                && Objects.equals(articulos, otherRevista.articulos)
+                && Objects.equals(anuncios, otherRevista.anuncios);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(numero, mes, anio);
+        return Objects.hash(portada, cartaEditor, articulos, anuncios);
     }
 
     @Override
     public String toString() {
         return "Revista{" +
-                "titulo='" + titulo + '\'' +
-                ", numero=" + numero +
-                ", mes=" + mes +
-                ", anio=" + anio +
+                "portada=" + (portada != null ? portada.getTitular() : "(sin portada)") +
                 ", totalPags=" + (1 + articulos.size() + anuncios.size()) +
                 '}';
     }

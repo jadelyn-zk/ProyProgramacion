@@ -1,12 +1,13 @@
 package es.iesnervion.revista.excepciones;
 
 /**
- * Excepción lanzada cuando la portada no contiene los elementos obligatorios
- * para ser considerada válida.
+ * Se lanza cuando la portada no contiene los elementos obligatorios.
  */
 public class PortadaIncompletaException extends RevistaException {
     /**
-     * @param message Descripción de los elementos faltantes en la portada.
+     * Crea la excepción con la descripción de lo que falta en la portada.
+     *
+     * @param message Descripción de los elementos faltantes en la portada
      */
     public PortadaIncompletaException(String message) {
         super(message);

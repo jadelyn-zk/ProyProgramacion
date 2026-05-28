@@ -1,101 +1,83 @@
 package es.iesnervion.revista.modelo;
 
+import java.io.Serializable;
 import java.util.Objects;
+
+import es.iesnervion.revista.utilidades.ValidacionDatos;
 
 /**
  * Un anuncio publicitario en la revista.
  */
-public class Anuncio {
+public class Anuncio implements Serializable {
 
-    // Para asignar IDs de forma ordenada
+    private static final long serialVersionUID = 1L;
+
+    // Contador interno para asignar IDs
     private static int contadorId = 1;
 
-    // El número de ID del anuncio
+    // ID del anuncio
     private int id;
 
-    // Nombre de la marca que se anuncia
+    // Marca que se anuncia
     private String marca;
 
     // Página donde se publica
     private int pagina;
 
-    // Lo que cuesta el anuncio
+    // Precio del anuncio
     private double precio;
 
-    // Enlace a la imagen publicitaria
-    private String imagenUrl;
-
     /**
-     * Constructor vacio.
+     * Constructor por defecto para un anuncio (asigna ID automático).
      */
     public Anuncio() {
         this.id = contadorId++;
     }
 
     /**
-     * Constructor con los datos principales del anuncio.
-     * 
-     * @param marca     Marca.
-     * @param precio    Precio.
-     * @param imagenUrl URL de la imagen.
+     * Construye un anuncio con los datos básicos.
+     *
+     * @param marca  Marca anunciada
+     * @param precio Precio del anuncio (decimal no negativo)
      */
-    public Anuncio(String marca, double precio, String imagenUrl) {
+    public Anuncio(String marca, double precio) {
         this.id = contadorId++;
-        this.marca = marca;
-        this.precio = precio;
-        this.imagenUrl = imagenUrl;
+        setMarca(marca);
+        setPrecio(precio);
     }
 
-    // Getters
     public int getId() {
         return id;
     }
 
-    public String getMarca() {
-        return marca;
-    }
-
-    public int getPagina() {
-        return pagina;
-    }
-
-    public double getPrecio() {
-        return precio;
+    public static void ajustarContadorId(int siguienteId) {
+        contadorId = Math.max(1, siguienteId);
     }
 
     public int getPaginasQueOcupa() {
         return 1;
     }
 
-    public String getImagenUrl() {
-        return imagenUrl;
-    }
-
-    // Setters
     public void setMarca(String marca) {
-        this.marca = marca;
+        this.marca = ValidacionDatos.validarTextoObligatorio(marca, "La marca");
     }
 
     public void setPagina(int pagina) {
-        this.pagina = pagina;
+        this.pagina = ValidacionDatos.validarEnteroPositivo(pagina, "La página del anuncio");
     }
 
     public void setPrecio(double precio) {
-        this.precio = precio;
-    }
-
-    public void setImagenUrl(String imagenUrl) {
-        this.imagenUrl = imagenUrl;
+        this.precio = ValidacionDatos.validarDecimalPositivo(precio, "El precio");
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o)
+    public boolean equals(Object other) {
+        if (this == other)
             return true;
-        if (o == null || getClass() != o.getClass())
+        if (other == null || getClass() != other.getClass())
             return false;
-        Anuncio anuncio = (Anuncio) o;
-        return id == anuncio.id;
+        Anuncio otherAnuncio = (Anuncio) other;
+        return id == otherAnuncio.id;
     }
 
     @Override

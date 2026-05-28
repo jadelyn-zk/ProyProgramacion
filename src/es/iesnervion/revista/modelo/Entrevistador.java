@@ -2,12 +2,14 @@ package es.iesnervion.revista.modelo;
 
 import java.util.Objects;
 
+import es.iesnervion.revista.utilidades.ValidacionDatos;
+
 /**
  * Representa a un entrevistador.
  */
 public class Entrevistador extends Persona {
 
-    // El medio de comunicación del que viene
+    // Medio de comunicación del que procede
     private String medio;
 
     /**
@@ -18,34 +20,31 @@ public class Entrevistador extends Persona {
     }
 
     /**
-     * Constructor completo.
+     * Constructor completo de `Entrevistador`.
+     *
+     * @param nombre Nombre
+     * @param edad   Edad
+     * @param medio  Medio de procedencia
      */
-    public Entrevistador(String dni, String nombre, String tlf, String email, int edad,
-            String medio) {
-        super(dni, nombre, tlf, email, edad);
-        this.medio = medio;
-    }
-
-    // -- Métodos de acceso --
-
-    public String getMedio() {
-        return medio;
+    public Entrevistador(String nombre, int edad, String medio) {
+        super(nombre, edad);
+        setMedio(medio);
     }
 
     public void setMedio(String medio) {
-        this.medio = medio;
+        this.medio = ValidacionDatos.validarTextoObligatorio(medio, "El medio");
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o)
+    public boolean equals(Object other) {
+        if (this == other)
             return true;
-        if (!super.equals(o))
+        if (!super.equals(other))
             return false;
-        if (!(o instanceof Entrevistador))
+        if (!(other instanceof Entrevistador))
             return false;
-        Entrevistador e = (Entrevistador) o;
-        return Objects.equals(medio, e.medio);
+        Entrevistador otherEntrevistador = (Entrevistador) other;
+        return Objects.equals(medio, otherEntrevistador.medio);
     }
 
     @Override
@@ -56,8 +55,7 @@ public class Entrevistador extends Persona {
     @Override
     public String toString() {
         return "Entrevistador{" +
-                "dni='" + getDni() + '\'' +
-                ", nombre='" + getNombre() + '\'' +
+                "nombre='" + getNombre() + '\'' +
                 ", medio='" + medio + '\'' +
                 '}';
     }

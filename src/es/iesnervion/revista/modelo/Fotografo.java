@@ -2,50 +2,50 @@ package es.iesnervion.revista.modelo;
 
 import java.util.Objects;
 
+import es.iesnervion.revista.utilidades.ValidacionDatos;
+
 /**
  * Representa a un fotógrafo.
  */
 public class Fotografo extends Persona {
 
-    // El estilo que suele usar para las fotos
+    // Estilo que suele usar en sus fotos
     private String estilo;
 
     /**
-     * Constructor vacio.
+     * Constructor por defecto.
      */
     public Fotografo() {
         super();
     }
 
     /**
-     * Constructor completo.
+     * Constructor completo de `Fotografo`.
+     *
+     * @param nombre Nombre
+     * @param edad   Edad
+     * @param estilo Estilo fotográfico
      */
-    public Fotografo(String dni, String nombre, String tlf, String email, int edad,
+    public Fotografo(String nombre, int edad,
             String estilo) {
-        super(dni, nombre, tlf, email, edad);
-        this.estilo = estilo;
-    }
-
-    // Getters
-
-    public String getEstilo() {
-        return estilo;
+        super(nombre, edad);
+        setEstilo(estilo);
     }
 
     public void setEstilo(String estilo) {
-        this.estilo = estilo;
+        this.estilo = ValidacionDatos.validarTextoObligatorio(estilo, "El estilo");
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o)
+    public boolean equals(Object other) {
+        if (this == other)
             return true;
-        if (!super.equals(o))
+        if (!super.equals(other))
             return false;
-        if (!(o instanceof Fotografo))
+        if (!(other instanceof Fotografo))
             return false;
-        Fotografo f = (Fotografo) o;
-        return Objects.equals(estilo, f.estilo);
+        Fotografo otherFotografo = (Fotografo) other;
+        return Objects.equals(estilo, otherFotografo.estilo);
     }
 
     @Override
@@ -56,8 +56,7 @@ public class Fotografo extends Persona {
     @Override
     public String toString() {
         return "Fotografo{" +
-                "dni='" + getDni() + '\'' +
-                ", nombre='" + getNombre() + '\'' +
+                "nombre='" + getNombre() + '\'' +
                 ", estilo='" + estilo + '\'' +
                 '}';
     }

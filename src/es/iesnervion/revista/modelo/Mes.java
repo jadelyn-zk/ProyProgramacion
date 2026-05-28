@@ -1,19 +1,21 @@
 package es.iesnervion.revista.modelo;
 
 /**
- * Enumeración con los meses para las ediciones.
+ * Representa los meses del año en formato legible.
  */
 public enum Mes {
-    ENERO,
-    FEBRERO,
-    MARZO,
-    ABRIL,
-    MAYO,
-    JUNIO,
-    JULIO,
-    AGOSTO,
-    SEPTIEMBRE,
-    OCTUBRE,
-    NOVIEMBRE,
-    DICIEMBRE
+    ENERO("Enero"), FEBRERO("Febrero"), MARZO("Marzo"), ABRIL("Abril"),
+    MAYO("Mayo"), JUNIO("Junio"), JULIO("Julio"), AGOSTO("Agosto"),
+    SEPTIEMBRE("Septiembre"), OCTUBRE("Octubre"), NOVIEMBRE("Noviembre"), DICIEMBRE("Diciembre");
+
+    private final String nombre;
+
+    Mes(String nombre) {
+        this.nombre = nombre;
+    }
+
+    @Override
+    public String toString() {
+        return nombre;
+    }
 }

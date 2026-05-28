@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import es.iesnervion.revista.utilidades.ValidacionDatos;
+
 /**
  * Representa una colección de moda dentro de la revista.
  */
@@ -25,7 +27,7 @@ public class ColeccionModa extends Articulo {
     private List<Modelo> modelos;
 
     /**
-     * Constructor vacio.
+     * Constructor por defecto de `ColeccionModa`.
      */
     public ColeccionModa() {
         super();
@@ -33,15 +35,21 @@ public class ColeccionModa extends Articulo {
     }
 
     /**
-     * Constructor con datos básicos.
+     * Crea una colección de moda con datos básicos.
+     *
+     * @param titulo        Título del artículo
+     * @param temporada     Temporada (Verano, Invierno...)
+     * @param diseñador     Diseñador responsable
+     * @param casaModa      Casa o marca de moda
+     * @param ciudadDesfile Ciudad donde se presentó
      */
     public ColeccionModa(String titulo, String temporada, Diseñador diseñador,
             String casaModa, String ciudadDesfile) {
         super(titulo);
-        this.temporada = temporada;
-        this.diseñador = diseñador;
-        this.casaModa = casaModa;
-        this.ciudadDesfile = ciudadDesfile;
+        setTemporada(temporada);
+        setDiseñador(diseñador);
+        setCasaModa(casaModa);
+        setCiudadDesfile(ciudadDesfile);
         this.modelos = new ArrayList<>();
     }
 
@@ -72,37 +80,37 @@ public class ColeccionModa extends Articulo {
         return modelos;
     }
 
-    public void setTemporada(String t) {
-        this.temporada = t;
+    public void setTemporada(String temporada) {
+        this.temporada = ValidacionDatos.validarTextoObligatorio(temporada, "La temporada");
     }
 
-    public void setDiseñador(Diseñador d) {
-        this.diseñador = d;
+    public void setDiseñador(Diseñador diseñador) {
+        this.diseñador = ValidacionDatos.validarNoNulo(diseñador, "El diseñador de la colección");
     }
 
-    public void setCasaModa(String c) {
-        this.casaModa = c;
+    public void setCasaModa(String casaModa) {
+        this.casaModa = ValidacionDatos.validarTextoObligatorio(casaModa, "La casa de moda");
     }
 
-    public void setCiudadDesfile(String ci) {
-        this.ciudadDesfile = ci;
+    public void setCiudadDesfile(String ciudadDesfile) {
+        this.ciudadDesfile = ValidacionDatos.validarTextoObligatorio(ciudadDesfile, "La ciudad del desfile");
     }
 
-    public void setModelos(List<Modelo> m) {
-        this.modelos = m;
+    public void setModelos(List<Modelo> modelos) {
+        this.modelos = ValidacionDatos.validarListaNoNula(modelos, "La lista de modelos");
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o)
+    public boolean equals(Object other) {
+        if (this == other)
             return true;
-        if (!super.equals(o))
+        if (!super.equals(other))
             return false;
-        if (!(o instanceof ColeccionModa))
+        if (!(other instanceof ColeccionModa))
             return false;
-        ColeccionModa c = (ColeccionModa) o;
-        return Objects.equals(temporada, c.temporada) &&
-                Objects.equals(casaModa, c.casaModa);
+        ColeccionModa otherColeccion = (ColeccionModa) other;
+        return Objects.equals(temporada, otherColeccion.temporada) &&
+                Objects.equals(casaModa, otherColeccion.casaModa);
     }
 
     @Override

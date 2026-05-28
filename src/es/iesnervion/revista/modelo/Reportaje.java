@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import es.iesnervion.revista.utilidades.ValidacionDatos;
+
 /**
  * Representa un reportaje escrito.
  */
@@ -19,7 +21,7 @@ public class Reportaje extends Articulo {
     private ColeccionModa coleccionRelacionada;
 
     /**
-     * Constructor por defecto.
+     * Constructor por defecto de `Reportaje`.
      */
     public Reportaje() {
         super();
@@ -27,11 +29,14 @@ public class Reportaje extends Articulo {
     }
 
     /**
-     * Constructor con título y tema.
+     * Crea un reportaje con título y temática.
+     *
+     * @param titulo   Título del reportaje
+     * @param tematica Tema o temática principal
      */
     public Reportaje(String titulo, String tematica) {
         super(titulo);
-        this.tematica = tematica;
+        setTematica(tematica);
         this.personasQueParticipan = new ArrayList<>();
     }
 
@@ -55,27 +60,27 @@ public class Reportaje extends Articulo {
     }
 
     public void setTematica(String tematica) {
-        this.tematica = tematica;
+        this.tematica = ValidacionDatos.validarTextoObligatorio(tematica, "La temática");
     }
 
-    public void setPersonasQueParticipan(List<Persona> p) {
-        this.personasQueParticipan = p;
+    public void setPersonasQueParticipan(List<Persona> personasParticipantes) {
+        this.personasQueParticipan = ValidacionDatos.validarListaNoNula(personasParticipantes, "La lista de personas participantes");
     }
 
-    public void setColeccionRelacionada(ColeccionModa c) {
-        this.coleccionRelacionada = c;
+    public void setColeccionRelacionada(ColeccionModa coleccionRelacionada) {
+        this.coleccionRelacionada = coleccionRelacionada;
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o)
+    public boolean equals(Object other) {
+        if (this == other)
             return true;
-        if (!super.equals(o))
+        if (!super.equals(other))
             return false;
-        if (!(o instanceof Reportaje))
+        if (!(other instanceof Reportaje))
             return false;
-        Reportaje r = (Reportaje) o;
-        return Objects.equals(tematica, r.tematica);
+        Reportaje otherReportaje = (Reportaje) other;
+        return Objects.equals(tematica, otherReportaje.tematica);
     }
 
     @Override

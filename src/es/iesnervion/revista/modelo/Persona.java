@@ -1,23 +1,20 @@
 package es.iesnervion.revista.modelo;
 
+import java.io.Serializable;
 import java.util.Objects;
+
+import es.iesnervion.revista.utilidades.ValidacionDatos;
 
 /**
  * Clase base para representar a cualquier persona en el sistema.
+ * Ahora `Persona` solo contiene `nombre` y `edad`.
  */
-public abstract class Persona {
+public abstract class Persona implements Serializable {
 
-    // El DNI de la persona
-    private String dni;
+    private static final long serialVersionUID = 1L;
 
     // Su nombre completo
     private String nombre;
-
-    // Su número de teléfono
-    private String tlf;
-
-    // Su dirección de email
-    private String email;
 
     // Su edad
     private int edad;
@@ -29,91 +26,51 @@ public abstract class Persona {
     }
 
     /**
-     * Constructor con todos los atributos.
-     * 
-     * @param dni    El DNI.
-     * @param nombre El nombre.
-     * @param tlf    El teléfono.
-     * @param email  El email.
-     * @param edad   La edad.
+     * Constructor mínimo de `Persona`.
+     *
+     * @param nombre El nombre completo
+     * @param edad   Edad (entero positivo)
      */
-    public Persona(String dni, String nombre, String tlf, String email, int edad) {
-        this.dni = dni;
-        this.nombre = nombre;
-        this.tlf = tlf;
-        this.email = email;
-        this.edad = edad;
+    public Persona(String nombre, int edad) {
+        setNombre(nombre);
+        setEdad(edad);
     }
 
     // -- Getters --
-
-    public String getDni() {
-        return dni;
-    }
 
     public String getNombre() {
         return nombre;
     }
 
-    public String getTlf() {
-        return tlf;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public int getEdad() {
-        return edad;
-    }
-
     // -- Setters --
 
-    public void setDni(String dni) {
-        this.dni = dni;
-    }
-
     public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public void setTlf(String tlf) {
-        this.tlf = tlf;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
+        this.nombre = ValidacionDatos.validarTextoObligatorio(nombre, "El nombre");
     }
 
     public void setEdad(int edad) {
-        this.edad = edad;
+        this.edad = ValidacionDatos.validarEnteroPositivo(edad, "La edad");
     }
 
-    /**
-     * Compara personas por su DNI.
-     */
     @Override
-    public boolean equals(Object o) {
-        if (this == o)
+    public boolean equals(Object other) {
+        if (this == other)
             return true;
-        if (o == null || getClass() != o.getClass())
+        if (other == null || getClass() != other.getClass())
             return false;
-        Persona persona = (Persona) o;
-        return Objects.equals(dni, persona.dni);
+        Persona otherPersona = (Persona) other;
+        return edad == otherPersona.edad && Objects.equals(nombre, otherPersona.nombre);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(dni);
+        return Objects.hash(nombre, edad);
     }
 
     @Override
     public String toString() {
         return "Persona{" +
-                "dni='" + dni + '\'' +
-                ", nombre='" + nombre + '\'' +
-                ", tlf='" + tlf + '\'' +
-                ", email='" + email + '\'' +
+                "nombre='" + nombre + '\'' +
                 ", edad=" + edad +
                 '}';
     }

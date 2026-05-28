@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import es.iesnervion.revista.utilidades.ValidacionDatos;
+
 /**
  * Representa un artículo tipo entrevista.
  */
@@ -29,7 +31,7 @@ public class Entrevista extends Articulo {
     private LocalDate fecha;
 
     /**
-     * Constructor vacio.
+     * Constructor por defecto.
      */
     public Entrevista() {
         super();
@@ -38,15 +40,21 @@ public class Entrevista extends Articulo {
     }
 
     /**
-     * Constructor con datos básicos.
+     * Constructor básico de `Entrevista`.
+     *
+     * @param titulo       Título del artículo
+     * @param entrevistador Entrevistador responsable
+     * @param entrevistado Persona entrevistada
+     * @param lugar        Lugar de la entrevista
+     * @param fecha        Fecha de realización
      */
     public Entrevista(String titulo, Entrevistador entrevistador, Persona entrevistado,
             String lugar, LocalDate fecha) {
         super(titulo);
-        this.entrevistador = entrevistador;
-        this.entrevistado = entrevistado;
-        this.lugar = lugar;
-        this.fecha = fecha;
+        setEntrevistador(entrevistador);
+        setEntrevistado(entrevistado);
+        setLugar(lugar);
+        setFecha(fecha);
         this.preguntas = new ArrayList<>();
         this.respuestas = new ArrayList<>();
     }
@@ -83,42 +91,42 @@ public class Entrevista extends Articulo {
     }
 
     public void setEntrevistador(Entrevistador entrevistador) {
-        this.entrevistador = entrevistador;
+        this.entrevistador = ValidacionDatos.validarNoNulo(entrevistador, "El entrevistador");
     }
 
     public void setEntrevistado(Persona entrevistado) {
-        this.entrevistado = entrevistado;
+        this.entrevistado = ValidacionDatos.validarNoNulo(entrevistado, "El entrevistado");
     }
 
     public void setPreguntas(List<String> preguntas) {
-        this.preguntas = preguntas;
+        this.preguntas = ValidacionDatos.validarListaNoNula(preguntas, "La lista de preguntas");
     }
 
     public void setRespuestas(List<String> respuestas) {
-        this.respuestas = respuestas;
+        this.respuestas = ValidacionDatos.validarListaNoNula(respuestas, "La lista de respuestas");
     }
 
     public void setLugar(String lugar) {
-        this.lugar = lugar;
+        this.lugar = ValidacionDatos.validarTextoObligatorio(lugar, "El lugar de la entrevista");
     }
 
     public void setFecha(LocalDate fecha) {
-        this.fecha = fecha;
+        this.fecha = ValidacionDatos.validarFechaNoNula(fecha, "La fecha de la entrevista");
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o)
+    public boolean equals(Object other) {
+        if (this == other)
             return true;
-        if (!super.equals(o))
+        if (!super.equals(other))
             return false;
-        if (!(o instanceof Entrevista))
+        if (!(other instanceof Entrevista))
             return false;
-        Entrevista e = (Entrevista) o;
-        return Objects.equals(entrevistador, e.entrevistador) &&
-                Objects.equals(entrevistado, e.entrevistado) &&
-                Objects.equals(lugar, e.lugar) &&
-                Objects.equals(fecha, e.fecha);
+        Entrevista otherEntrevista = (Entrevista) other;
+        return Objects.equals(entrevistador, otherEntrevista.entrevistador) &&
+                Objects.equals(entrevistado, otherEntrevista.entrevistado) &&
+                Objects.equals(lugar, otherEntrevista.lugar) &&
+                Objects.equals(fecha, otherEntrevista.fecha);
     }
 
     @Override

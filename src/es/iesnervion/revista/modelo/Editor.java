@@ -2,50 +2,49 @@ package es.iesnervion.revista.modelo;
 
 import java.util.Objects;
 
+import es.iesnervion.revista.utilidades.ValidacionDatos;
+
 /**
  * Representa a un editor de la revista.
  */
 public class Editor extends Persona {
 
-    // El cargo o puesto que tiene en la revista
+    // Cargo o puesto dentro de la revista
     private String cargo;
 
     /**
-     * Constructor vacio.
+     * Constructor por defecto.
      */
     public Editor() {
         super();
     }
 
     /**
-     * Constructor completo.
+     * Constructor completo de `Editor`.
+     *
+     * @param nombre Nombre
+     * @param edad   Edad
+     * @param cargo  Cargo o puesto en la revista
      */
-    public Editor(String dni, String nombre, String tlf, String email, int edad,
-            String cargo) {
-        super(dni, nombre, tlf, email, edad);
-        this.cargo = cargo;
-    }
-
-    // Getters
-
-    public String getCargo() {
-        return cargo;
+    public Editor(String nombre, int edad, String cargo) {
+        super(nombre, edad);
+        setCargo(cargo);
     }
 
     public void setCargo(String cargo) {
-        this.cargo = cargo;
+        this.cargo = ValidacionDatos.validarTextoObligatorio(cargo, "El cargo");
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o)
+    public boolean equals(Object other) {
+        if (this == other)
             return true;
-        if (!super.equals(o))
+        if (!super.equals(other))
             return false;
-        if (!(o instanceof Editor))
+        if (!(other instanceof Editor))
             return false;
-        Editor e = (Editor) o;
-        return Objects.equals(cargo, e.cargo);
+        Editor otherEditor = (Editor) other;
+        return Objects.equals(cargo, otherEditor.cargo);
     }
 
     @Override
@@ -56,8 +55,7 @@ public class Editor extends Persona {
     @Override
     public String toString() {
         return "Editor{" +
-                "dni='" + getDni() + '\'' +
-                ", nombre='" + getNombre() + '\'' +
+                "nombre='" + getNombre() + '\'' +
                 ", cargo='" + cargo + '\'' +
                 '}';
     }

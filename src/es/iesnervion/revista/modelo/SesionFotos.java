@@ -3,6 +3,8 @@ package es.iesnervion.revista.modelo;
 import java.time.LocalDate;
 import java.util.Objects;
 
+import es.iesnervion.revista.utilidades.ValidacionDatos;
+
 /**
  * Representa una sesión fotográfica para la revista.
  */
@@ -27,25 +29,33 @@ public class SesionFotos extends Articulo {
     private LocalDate fecha;
 
     /**
-     * Constructor por defecto.
+     * Constructor por defecto de sesión de fotos.
      */
     public SesionFotos() {
         super();
     }
 
     /**
-     * Constructor con todos los datos.
+     * Crea una sesión fotográfica con todos los datos necesarios.
+     *
+     * @param titulo       Título de la sesión
+     * @param modelo       Modelo que posa
+     * @param fotografo    Fotógrafo encargado
+     * @param maquillador  Maquillador participante
+     * @param diseñador    Diseñador de la ropa
+     * @param localizacion Lugar de la sesión
+     * @param fecha        Fecha de la sesión
      */
     public SesionFotos(String titulo, Modelo modelo, Fotografo fotografo,
             Maquillador maquillador, Diseñador diseñador,
             String localizacion, LocalDate fecha) {
         super(titulo);
-        this.modelo = modelo;
-        this.fotografo = fotografo;
-        this.maquillador = maquillador;
-        this.diseñador = diseñador;
-        this.localizacion = localizacion;
-        this.fecha = fecha;
+        setModelo(modelo);
+        setFotografo(fotografo);
+        setMaquillador(maquillador);
+        setDiseñador(diseñador);
+        setLocalizacion(localizacion);
+        setFecha(fecha);
     }
 
     @Override
@@ -79,43 +89,43 @@ public class SesionFotos extends Articulo {
         return fecha;
     }
 
-    public void setModelo(Modelo m) {
-        this.modelo = m;
+    public void setModelo(Modelo modelo) {
+        this.modelo = ValidacionDatos.validarNoNulo(modelo, "El modelo de la sesión");
     }
 
-    public void setFotografo(Fotografo f) {
-        this.fotografo = f;
+    public void setFotografo(Fotografo fotografo) {
+        this.fotografo = ValidacionDatos.validarNoNulo(fotografo, "El fotógrafo de la sesión");
     }
 
-    public void setMaquillador(Maquillador mq) {
-        this.maquillador = mq;
+    public void setMaquillador(Maquillador maquillador) {
+        this.maquillador = ValidacionDatos.validarNoNulo(maquillador, "El maquillador de la sesión");
     }
 
-    public void setDiseñador(Diseñador d) {
-        this.diseñador = d;
+    public void setDiseñador(Diseñador diseñador) {
+        this.diseñador = ValidacionDatos.validarNoNulo(diseñador, "El diseñador de la sesión");
     }
 
-    public void setLocalizacion(String l) {
-        this.localizacion = l;
+    public void setLocalizacion(String localizacion) {
+        this.localizacion = ValidacionDatos.validarTextoObligatorio(localizacion, "La localización");
     }
 
-    public void setFecha(LocalDate fe) {
-        this.fecha = fe;
+    public void setFecha(LocalDate fecha) {
+        this.fecha = ValidacionDatos.validarFechaNoNula(fecha, "La fecha de la sesión");
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o)
+    public boolean equals(Object other) {
+        if (this == other)
             return true;
-        if (!super.equals(o))
+        if (!super.equals(other))
             return false;
-        if (!(o instanceof SesionFotos))
+        if (!(other instanceof SesionFotos))
             return false;
-        SesionFotos s = (SesionFotos) o;
-        return Objects.equals(modelo, s.modelo) &&
-                Objects.equals(fotografo, s.fotografo) &&
-                Objects.equals(localizacion, s.localizacion) &&
-                Objects.equals(fecha, s.fecha);
+        SesionFotos otherSesion = (SesionFotos) other;
+        return Objects.equals(modelo, otherSesion.modelo) &&
+                Objects.equals(fotografo, otherSesion.fotografo) &&
+                Objects.equals(localizacion, otherSesion.localizacion) &&
+                Objects.equals(fecha, otherSesion.fecha);
     }
 
     @Override

@@ -1,39 +1,43 @@
 package es.iesnervion.revista.modelo;
 
+import java.io.Serializable;
 import java.util.Objects;
+import es.iesnervion.revista.utilidades.ValidacionDatos;
 
 /**
  * Clase que representa un artículo de la revista.
  */
-public abstract class Articulo {
+public abstract class Articulo implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     // Contador para generar los IDs
     private static int contadorId = 1;
 
-    // El identificador único
+    // id única
     private int id;
 
-    // El título de la sección o artículo
+    // título de la sección o artículo
     private String titulo;
 
     // Página donde comienza (se calcula automáticamente)
     private int paginaInicio;
 
     /**
-     * Constructor por defecto.
+     * Constructor por defecto de un artículo que asigna la id
      */
     public Articulo() {
         this.id = contadorId++;
     }
 
     /**
-     * Constructor con el título del artículo.
-     * 
-     * @param titulo El nombre o titular.
+     * Crea un artículo con su título.
+     *
+     * @param titulo Título del artículo (texto obligatorio)
      */
     public Articulo(String titulo) {
         this.id = contadorId++;
-        this.titulo = titulo;
+        setTitulo(titulo);
     }
 
     /**
@@ -57,29 +61,33 @@ public abstract class Articulo {
         return paginaInicio;
     }
 
-    // En este modelo cada artículo ocupa solo 1 página
+    // Cada artículo ocupa solo 1 página
     public int getPaginasQueOcupa() {
         return 1;
+    }
+
+    public static void ajustarContadorId(int siguienteId) {
+        contadorId = Math.max(1, siguienteId);
     }
 
     // Setters
 
     public void setTitulo(String titulo) {
-        this.titulo = titulo;
+        this.titulo = ValidacionDatos.validarTextoObligatorio(titulo, "El título");
     }
 
     public void setPaginaInicio(int paginaInicio) {
-        this.paginaInicio = paginaInicio;
+        this.paginaInicio = ValidacionDatos.validarEnteroPositivo(paginaInicio, "La página de inicio");
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o)
+    public boolean equals(Object other) {
+        if (this == other)
             return true;
-        if (o == null || getClass() != o.getClass())
+        if (other == null || getClass() != other.getClass())
             return false;
-        Articulo articulo = (Articulo) o;
-        return id == articulo.id;
+        Articulo otherArticulo = (Articulo) other;
+        return id == otherArticulo.id;
     }
 
     @Override
