@@ -3,11 +3,11 @@ package es.iesnervion.revista.excepciones;
 /**
  * Indica que la revista no alcanza los requisitos mínimos de contenido.
  */
-public class MinimosNoCumplidosException extends RevistaException {
+public class MinimosNoCumplidosException extends Exception {
     /**
-     * Crea la excepción con la explicación de los elementos faltantes.
+     * Excepcion que indica que no se cumple los elementos minimos para una seccion
      *
-     * @param message Descripción de los mínimos que no se han cumplido
+     * @param message señala que no se cumplen los mínimos elementos para una seccion
      */
     public MinimosNoCumplidosException(String message) {
         super(message);

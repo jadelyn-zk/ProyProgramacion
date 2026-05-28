@@ -1,8 +1,0 @@
-REVISTA
-Numero: 0
-Titulo: La moda chula
-Portada: (sin portada)
-Carta: (sin carta)
-Articulos:
-Anuncios:
-- Anuncio{id=1, marca='loewe', pagina=2, precio=50.0}

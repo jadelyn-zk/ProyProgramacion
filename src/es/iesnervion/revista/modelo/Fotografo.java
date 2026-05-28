@@ -36,6 +36,10 @@ public class Fotografo extends Persona {
         this.estilo = ValidacionDatos.validarTextoObligatorio(estilo, "El estilo");
     }
 
+    public String getEstilo() {
+        return estilo;
+    }
+
     @Override
     public boolean equals(Object other) {
         if (this == other)

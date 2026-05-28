@@ -35,6 +35,10 @@ public class Editor extends Persona {
         this.cargo = ValidacionDatos.validarTextoObligatorio(cargo, "El cargo");
     }
 
+    public String getCargo() {
+        return cargo;
+    }
+
     @Override
     public boolean equals(Object other) {
         if (this == other)

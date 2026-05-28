@@ -3,11 +3,11 @@ package es.iesnervion.revista.excepciones;
 /**
  * Indica que una sección de la revista ha superado el máximo permitido.
  */
-public class MaximosSuperadosException extends RevistaException {
+public class MaximosSuperadosException extends Exception {
     /**
-     * Crea la excepción con la descripción del exceso.
+     * Excepcion para indicar que se supera el maximo de elementos para esa seccion
      *
-     * @param message Descripción de la sección que ha superado el máximo
+     * @param message señala que se supera el maximo de elementos para esa seccion
      */
     public MaximosSuperadosException(String message) {
         super(message);

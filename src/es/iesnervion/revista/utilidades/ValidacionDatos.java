@@ -4,12 +4,10 @@ import java.time.LocalDate;
 import java.util.List;
 
 /**
- * Utilidad de validación para entradas de usuario.
- * <p>
- * Proporciona métodos auxiliares para validar textos obligatorios, números
- * positivos, fechas y listas. En caso de fallo lanza {@link IllegalArgumentException}
- * con un mensaje claro y apropiado para mostrarse al usuario.
- * </p>
+ * Clase para validar las entradas de usuario cuando el programa pide datos,
+ * valida textos obligatorios, números positivos, fechas y listas. 
+ * Si falla lanza una excepcion.
+ * 
  */
 public final class ValidacionDatos {
 
@@ -17,7 +15,7 @@ public final class ValidacionDatos {
     }
 
     /**
-     * Valida que un texto no sea nulo ni vacío.
+     * Valida que un texto no sea nulo ni este vacío.
      *
      * @param valor Texto a validar
      * @param campo Nombre del campo (usado en el mensaje de error)
@@ -35,7 +33,7 @@ public final class ValidacionDatos {
      * Valida que un entero sea mayor que cero.
      *
      * @param valor Valor a validar
-     * @param campo Nombre del campo (usado en el mensaje de error)
+     * @param campo Nombre del campo 
      * @return el mismo entero validado
      * @throws IllegalArgumentException si el valor es menor o igual a cero
      */
@@ -50,7 +48,7 @@ public final class ValidacionDatos {
      * Valida que un número decimal no sea negativo.
      *
      * @param valor Valor a validar
-     * @param campo Nombre del campo (usado en el mensaje de error)
+     * @param campo Nombre del campo 
      * @return el mismo valor validado
      * @throws IllegalArgumentException si el valor es negativo
      */
@@ -65,7 +63,7 @@ public final class ValidacionDatos {
      * Valida que una fecha no sea nula.
      *
      * @param valor Fecha a validar
-     * @param campo Nombre del campo (usado en el mensaje de error)
+     * @param campo Nombre del campo 
      * @return la fecha validada
      * @throws IllegalArgumentException si la fecha es nula
      */
@@ -79,9 +77,9 @@ public final class ValidacionDatos {
     /**
      * Valida que un objeto no sea nulo.
      *
-     * @param <T>   Tipo del objeto
+     * @param <T> Tipo del objeto
      * @param valor Objeto a validar
-     * @param campo Nombre del campo (usado en el mensaje de error)
+     * @param campo Nombre del campo 
      * @return el mismo objeto si no es nulo
      * @throws IllegalArgumentException si el objeto es nulo
      */
@@ -95,10 +93,10 @@ public final class ValidacionDatos {
     /**
      * Valida que una lista no sea nula.
      *
-     * @param <T>   Tipo de elementos
+     * @param <T> Tipo de elementos
      * @param valor Lista a validar
-     * @param campo Nombre del campo (usado en el mensaje de error)
-     * @return la misma lista si no es nula
+     * @param campo Nombre del campo 
+     * @return devuelve la misma lista si no es nula
      * @throws IllegalArgumentException si la lista es nula
      */
     public static <T> List<T> validarListaNoNula(List<T> valor, String campo) {

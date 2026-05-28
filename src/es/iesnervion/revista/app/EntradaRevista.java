@@ -3,6 +3,7 @@ package es.iesnervion.revista.app;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 import es.iesnervion.revista.modelo.*;
@@ -55,6 +56,31 @@ public final class EntradaRevista {
     }
 
     /**
+     * Lee una opción de menú con posibilidad de cancelar.
+     *
+     * @param mensaje mensaje mostrado al usuario.
+     * @param maximo máximo de opciones válidas.
+     * @return opción elegida, o 0 si se cancela.
+     */
+    public static int leerOpcionMenuConCancelacion(String mensaje, int maximo) {
+        while (true) {
+            try {
+                String texto = pedirLinea(mensaje + " (0 para cancelar)");
+                if (texto.equalsIgnoreCase("s")) {
+                    return 0;
+                }
+                int valor = Integer.parseInt(texto);
+                if (valor >= 0 && valor <= maximo) {
+                    return valor;
+                }
+                System.out.println("Introduce un número entre 0 y " + maximo + ".");
+            } catch (NumberFormatException e) {
+                System.out.println("Introduce un número entero válido.");
+            }
+        }
+    }
+
+    /**
      * Lee un índice de lista.
      *
      * @param mensaje mensaje mostrado al usuario.
@@ -62,21 +88,11 @@ public final class EntradaRevista {
      * @return índice basado en cero o -1 si se cancela.
      */
     public static int leerIndice(String mensaje, int maximo) {
-        while (true) {
-            String texto = pedirLinea(mensaje);
-            if (texto.equalsIgnoreCase("s")) {
-                return -1;
-            }
-            try {
-                int valor = Integer.parseInt(texto);
-                if (valor >= 1 && valor <= maximo) {
-                    return valor - 1;
-                }
-            } catch (NumberFormatException e) {
-                // se informa abajo
-            }
-            System.out.println("Número no válido.");
+        int valor = leerOpcionMenuConCancelacion(mensaje, maximo);
+        if (valor == 0) {
+            return -1;
         }
+        return valor - 1;
     }
 
     /**
@@ -288,7 +304,7 @@ public final class EntradaRevista {
      *
      * @param articulos lista de artículos.
      */
-    public static void listarArticulos(ArrayList<Articulo> articulos) {
+    public static void listarArticulos(List<Articulo> articulos) {
         for (int indice = 0; indice < articulos.size(); indice++) {
             System.out.println((indice + 1) + ") " + articulos.get(indice));
         }
@@ -299,7 +315,7 @@ public final class EntradaRevista {
      *
      * @param anuncios lista de anuncios.
      */
-    public static void listarAnuncios(ArrayList<Anuncio> anuncios) {
+    public static void listarAnuncios(List<Anuncio> anuncios) {
         for (int indice = 0; indice < anuncios.size(); indice++) {
             System.out.println((indice + 1) + ") " + anuncios.get(indice));
         }

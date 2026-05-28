@@ -50,6 +50,14 @@ public class Anuncio implements Serializable {
         return id;
     }
 
+    public String getMarca() {
+        return marca;
+    }
+
+    public double getPrecio() {
+        return precio;
+    }
+
     public static void ajustarContadorId(int siguienteId) {
         contadorId = Math.max(1, siguienteId);
     }

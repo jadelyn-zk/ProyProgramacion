@@ -35,6 +35,10 @@ public class Entrevistador extends Persona {
         this.medio = ValidacionDatos.validarTextoObligatorio(medio, "El medio");
     }
 
+    public String getMedio() {
+        return medio;
+    }
+
     @Override
     public boolean equals(Object other) {
         if (this == other)

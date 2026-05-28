@@ -39,6 +39,14 @@ public class Diseñador extends Persona {
         this.casaActual = ValidacionDatos.validarTextoObligatorio(casaActual, "La casa actual");
     }
 
+    public String getEstilo() {
+        return estilo;
+    }
+
+    public String getCasaActual() {
+        return casaActual;
+    }
+
     @Override
     public boolean equals(Object other) {
         if (this == other)

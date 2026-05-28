@@ -46,6 +46,14 @@ public class Modelo extends Persona {
         return talla;
     }
 
+    public String getAgencia() {
+        return agencia;
+    }
+
+    public double getAltura() {
+        return altura;
+    }
+
     public void setAgencia(String agencia) {
         this.agencia = ValidacionDatos.validarTextoObligatorio(agencia, "La agencia");
     }

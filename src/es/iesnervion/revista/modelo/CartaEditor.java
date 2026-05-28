@@ -41,6 +41,18 @@ public class CartaEditor implements Serializable {
         setFecha(fecha);
     }
 
+    /**
+     * Constructor simplificado solo con mensaje y fecha (para cargar desde archivo).
+     * 
+     * @param mensaje Contenido de la carta
+     * @param fecha   Fecha de escritura
+     */
+    public CartaEditor(String mensaje, LocalDate fecha) {
+        this.editor = null;
+        setMensaje(mensaje);
+        setFecha(fecha);
+    }
+
     public Editor getEditor() {
         return editor;
     }

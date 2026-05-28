@@ -42,6 +42,10 @@ public abstract class Persona implements Serializable {
         return nombre;
     }
 
+    public int getEdad() {
+        return edad;
+    }
+
     // -- Setters --
 
     public void setNombre(String nombre) {

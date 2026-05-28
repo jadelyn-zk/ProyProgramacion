@@ -36,6 +36,10 @@ public class Maquillador extends Persona {
         this.especialidad = ValidacionDatos.validarTextoObligatorio(especialidad, "La especialidad");
     }
 
+    public String getEspecialidad() {
+        return especialidad;
+    }
+
     @Override
     public boolean equals(Object other) {
         if (this == other)

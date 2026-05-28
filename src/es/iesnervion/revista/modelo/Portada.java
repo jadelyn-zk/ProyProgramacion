@@ -56,6 +56,21 @@ public class Portada implements Serializable {
         setImagenUrl(imagenUrl);
     }
 
+    /**
+     * Constructor simplificado solo con titular e imagen (para cargar desde archivo).
+     * 
+     * @param titular   Titular de la portada.
+     * @param imagenUrl URL de la imagen.
+     */
+    public Portada(String titular, String imagenUrl) {
+        this.modelo = null;
+        this.fotografo = null;
+        this.maquillador = null;
+        this.diseñador = null;
+        setTitular(titular);
+        setImagenUrl(imagenUrl);
+    }
+
     // -- Getters --
     public Modelo getModelo() {
         return modelo;

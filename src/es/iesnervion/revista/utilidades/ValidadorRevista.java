@@ -4,9 +4,10 @@ import es.iesnervion.revista.excepciones.*;
 import es.iesnervion.revista.modelo.*;
 
 /**
- * Método para validar que una revista cumple con los requisitos para publicarse
+ * Validar que una revista cumpla con los requisitos para publicarse
  * Cada método comprueba una cosa concreta y cuando falla lanza su excepcion correspondiente
  */
+
 public final class ValidadorRevista {
 
     // Máximo y mínimo de páginas permitido para una revista completa.
@@ -27,7 +28,7 @@ public final class ValidadorRevista {
      * @param revista Revista a comprobar.
      * @return si el número total de páginas es válido devuelve true
      * @throws IllegalArgumentException si la revista no existe lanza excepcion
-     * @throws LimitePaginasException si el total de páginas no está entre los límites configurados lanza excepcion
+     * @throws LimitePaginasException si el total de páginas no está entre los límites lanza excepcion
      */
     public static boolean validarTotalPaginas(Revista revista) throws LimitePaginasException {
         validarRevistaNoNula(revista);
@@ -42,10 +43,10 @@ public final class ValidadorRevista {
     }
 
     /**
-     * Comprueba que la revista cumpla los mínimos por secciones y que no exceda los máximos
+     * Comprueba que la revista cumpla los mínimos POR SECCIONES y que no exceda los máximos
      *
      * @param revista Revista a comprobar.
-     * @return si la distribución de contenido es válida devuelve true
+     * @return si hay los suficientes elementos por seccion devuelve true
      * @throws IllegalArgumentException si la revista no existe lanza excepcion
      * @throws MinimosNoCumplidosException si faltan entrevistas o anuncios mínimos lanza excepcion
      * @throws MaximosSuperadosException si se supera el número máximo de artículos o anuncios lanza excepcion
@@ -75,15 +76,14 @@ public final class ValidadorRevista {
     }
 
     /**
-     * Verifica que la portada tenga todos los elementos obligatorios
+     * Verifica que la portada tenga todos los elementos obligatorios.
      *
      * @param portada Portada a comprobar
-     * @return  si la portada está completa devuelve true
-     * @throws PortadaIncompletaException si falta cualquier dato obligatorio de
-     *         la portada
+     * @return si la portada está completa devuelve true
+     * @throws MinimosNoCumplidosException si falta cualquier dato de la portada
      */
     public static boolean validarPortadaCompleta(Portada portada)
-            throws PortadaIncompletaException {
+            throws MinimosNoCumplidosException {
         if (portada == null
                 || portada.getModelo() == null
                 || portada.getFotografo() == null
@@ -91,9 +91,8 @@ public final class ValidadorRevista {
                 || portada.getDiseñador() == null
                 || !tieneTexto(portada.getTitular())
                 || !tieneTexto(portada.getImagenUrl())) {
-            throw new PortadaIncompletaException(
-                "La portada debe incluir modelo, fotógrafo, maquillador, diseñador, titular e imagen."
-            );
+            throw new MinimosNoCumplidosException(
+                    "La portada debe incluir modelo, fotógrafo, maquillador, diseñador, titular e imagen.");
         }
         return true;
     }
@@ -102,7 +101,7 @@ public final class ValidadorRevista {
      * Verifica que la carta del editor esté completa.
      *
      * @param carta Carta del editor a comprobar
-     * @return si la carta contiene editor, mensaje y fecha devuelve true
+     * @return si la carta contiene todos los elementos devuelve true
      * @throws MinimosNoCumplidosException si la carta del editor está incompleta
      */
     public static boolean validarCartaEditorCompleta(CartaEditor carta)
@@ -125,11 +124,11 @@ public final class ValidadorRevista {
      *
      * @param revista Revista a comprobar.
      * @return {@code true} si la revista puede publicarse.
-     * @throws IllegalArgumentException si la revista es {@code null}.
+     * @throws IllegalArgumentException si la revista es null.
      * @throws RevistaException si alguna de las validaciones específicas falla.
      */
-    public static boolean validarRevistaListaParaPublicar(Revista revista)
-            throws RevistaException {
+        public static boolean validarRevistaListaParaPublicar(Revista revista)
+            throws MinimosNoCumplidosException, MaximosSuperadosException, LimitePaginasException {
         validarRevistaNoNula(revista);
 
         validarPortadaCompleta(revista.getPortada());
@@ -145,7 +144,7 @@ public final class ValidadorRevista {
      *
      * @param revista Revista a evaluar.
      * @return Número total de páginas.
-     * @throws IllegalArgumentException si la revista es {@code null}.
+     * @throws IllegalArgumentException si la revista es null.
      */
     public static int calcularTotalPaginas(Revista revista) {
         validarRevistaNoNula(revista);
@@ -161,90 +160,47 @@ public final class ValidadorRevista {
     }
 
     /**
-     * Devuelve un resumen con los problemas que impiden publicar la revista.
+     * Devuelve un texto con los problemas que no dejan publicar la revista.
      *
      * @param revista Revista a revisar.
-     * @return Texto con los fallos encontrados o un mensaje de éxito si todo está correcto
+     * @return Texto con los fallos encontrados o un mensaje de éxito si está bien
      */
     public static String getResumenFaltantes(Revista revista) {
         if (revista == null) {
             return "La revista no puede ser nula.";
         }
+        StringBuilder resumen = new StringBuilder();
 
-        String resumen = "";
-
-        if (revista.getPortada() == null) {
-            resumen += "- Falta la portada\n";
-        } else {
-            if (revista.getPortada().getModelo() == null) {
-                resumen += "- Falta el modelo de la portada\n";
-            }
-            if (revista.getPortada().getFotografo() == null) {
-                resumen += "- Falta el fotógrafo de la portada\n";
-            }
-            if (revista.getPortada().getMaquillador() == null) {
-                resumen += "- Falta el maquillador de la portada\n";
-            }
-            if (revista.getPortada().getDiseñador() == null) {
-                resumen += "- Falta el diseñador de la portada\n";
-            }
-            if (!tieneTexto(revista.getPortada().getTitular())) {
-                resumen += "- Falta el titular de la portada\n";
-            }
-            if (!tieneTexto(revista.getPortada().getImagenUrl())) {
-                resumen += "- Falta la imagen de la portada\n";
-            }
-        }
-
-        if (revista.getCartaEditor() == null) {
-            resumen += "- Falta la carta del editor\n";
-        } else {
-            if (revista.getCartaEditor().getEditor() == null) {
-                resumen += "- Falta el editor de la carta\n";
-            }
-            if (!tieneTexto(revista.getCartaEditor().getMensaje())) {
-                resumen += "- Falta el mensaje de la carta del editor\n";
-            }
-            if (revista.getCartaEditor().getFecha() == null) {
-                resumen += "- Falta la fecha de la carta del editor\n";
-            }
-        }
-
-        int entrevistas = contarEntrevistas(revista);
-
-        if (entrevistas < ARTICULOS_MIN) {
-            resumen += "- Falta al menos una entrevista\n";
-        }
-
-        if (revista.getArticulos().size() > ARTICULOS_MAX) {
-            resumen += "- Te has pasado del límite de artículos (máximo "
-                + ARTICULOS_MAX + ")\n";
-        }
-
-        if (revista.getAnuncios().size() < ANUNCIOS_MIN) {
-            resumen += "- Faltan anuncios\n";
-        }
-
-        if (revista.getAnuncios().size() > ANUNCIOS_MAX) {
-            resumen += "- Demasiados anuncios (máximo " + ANUNCIOS_MAX + ")\n";
+        // Reutilizar los validadores existentes y capturar sus mensajes de error
+        try {
+            validarPortadaCompleta(revista.getPortada());
+        } catch (MinimosNoCumplidosException e) {
+            resumen.append("- Portada: ").append(e.getMessage()).append('\n');
         }
 
         try {
-            int totalPaginas = calcularTotalPaginas(revista);
-            if (totalPaginas < PAGINAS_MINIMAS || totalPaginas > PAGINAS_MAXIMAS) {
-                resumen += "- La revista tiene " + totalPaginas
-                    + " páginas y debe estar entre " + PAGINAS_MINIMAS + " y "
-                    + PAGINAS_MAXIMAS + "\n";
-            }
-        } catch (IllegalArgumentException ignored) {
-            return "La revista no puede ser nula.";
+            validarCartaEditorCompleta(revista.getCartaEditor());
+        } catch (MinimosNoCumplidosException e) {
+            resumen.append("- Carta del editor: ").append(e.getMessage()).append('\n');
         }
 
-        return resumen.isEmpty() ? "Está todo listo." : resumen;
+        try {
+            validarMinimosPorSeccion(revista);
+        } catch (MinimosNoCumplidosException | MaximosSuperadosException e) {
+            resumen.append("- Secciones: ").append(e.getMessage()).append('\n');
+        }
+
+        try {
+            validarTotalPaginas(revista);
+        } catch (LimitePaginasException e) {
+            resumen.append("- Páginas: ").append(e.getMessage()).append('\n');
+        }
+
+        return resumen.length() == 0 ? "Está todo listo." : resumen.toString();
     }
 
     /**
-     * Comprueba que la referencia a la revista no sea {@code null}.
+     * Comprueba que la referencia a la revista no sea null
      *
      * @param revista Revista a revisar.
      * @throws IllegalArgumentException si la revista es {@code null}.
@@ -275,7 +231,7 @@ public final class ValidadorRevista {
      * Indica si un texto contiene contenido visible.
      *
      * @param texto Texto a evaluar.
-     * @return {@code true} si el texto no es {@code null} ni está vacío.
+     * @return devuelve true si el texto no es null ni está vacío.
      */
     private static boolean tieneTexto(String texto) {
         return texto != null && !texto.isBlank();

@@ -1,38 +1,27 @@
-package es.iesnervion.revista.app;
+package es.iesnervion.revista;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+
 import java.util.ArrayList;
+import java.util.List;
 
+import es.iesnervion.revista.app.EntradaRevista;
+import es.iesnervion.revista.excepciones.LimitePaginasException;
+import es.iesnervion.revista.excepciones.MaximosSuperadosException;
+import es.iesnervion.revista.excepciones.MinimosNoCumplidosException;
 import es.iesnervion.revista.modelo.*;
 import es.iesnervion.revista.utilidades.ValidadorRevista;
-import es.iesnervion.revista.excepciones.RevistaException;
+import es.iesnervion.revista.utilidades.GestorArchivos;
 
-/**
- * Punto de arranque de la aplicación de consola con el CRUD de la revista.
- */
 public class Main {
-
-    // Copia persistente principal de la revista
-    private static final Path ARCHIVO_DATOS = Paths.get("revista.txt");
-    private static final Path ARCHIVO_SERIALIZADO = Paths.get("revista.ser");
 
     /**
      * Punto de entrada de la aplicación.
-     *
-     * @param args argumentos de línea de comandos, no usados.
      */
     public static void main(String[] args) {
-        Revista revista = cargarRevista();
+        Revista revista = GestorArchivos.cargarRevistaSimple();
         boolean salir = false;
 
+        // bucle principal del programa, se repite hasta que el usuario elija salir
         while (!salir) {
             mostrarMenuPrincipal();
             int opcion = EntradaRevista.leerEnteroPositivo("Elige una opción:");
@@ -40,15 +29,15 @@ public class Main {
             switch (opcion) {
             case 1:
                 anadirElemento(revista);
-                guardarRevista(revista);
+                GestorArchivos.guardarRevistaSimple(revista);
                 break;
             case 2:
                 editarElemento(revista);
-                guardarRevista(revista);
+                GestorArchivos.guardarRevistaSimple(revista);
                 break;
             case 3:
                 borrarElemento(revista);
-                guardarRevista(revista);
+                GestorArchivos.guardarRevistaSimple(revista);
                 break;
             case 4:
                 listarRevista(revista);
@@ -57,8 +46,11 @@ public class Main {
                 validarYPublicar(revista);
                 break;
             case 6:
-                guardarRevista(revista);
+                GestorArchivos.guardarRevistaSimple(revista);
                 salir = true;
+                break;
+            case 7:
+                borrarTodo(revista);
                 break;
             default:
                 System.out.println("Opción no válida.");
@@ -67,6 +59,8 @@ public class Main {
 
         System.out.println("Saliendo...");
     }
+
+//--------------------------- MENÚS ----------------------------------------
 
     /**
      * Muestra el menú principal.
@@ -79,25 +73,7 @@ public class Main {
         System.out.println("4) Ver");
         System.out.println("5) Validar y publicar");
         System.out.println("6) Salir");
-    }
-
-    /**
-     * Valida la revista antes de publicar y muestra los fallos encontrados.
-     * Si la validación es correcta, se guarda la revista como publicada.
-     *
-     * @param revista Revista a validar.
-     */
-    private static void validarYPublicar(Revista revista) {
-        try {
-            ValidadorRevista.validarRevistaListaParaPublicar(revista);
-            System.out.println("La revista está lista para publicarse.");
-            guardarRevista(revista);
-        } catch (RevistaException e) {
-            System.out.println("No se puede publicar: " + e.getMessage());
-            System.out.println("Resumen de faltantes:\n" + ValidadorRevista.getResumenFaltantes(revista));
-        } catch (IllegalArgumentException e) {
-            System.out.println("Error en la validación: " + e.getMessage());
-        }
+        System.out.println("7) Borrar todo");
     }
 
     /**
@@ -133,14 +109,19 @@ public class Main {
         System.out.println("4) Anuncio");
     }
 
+//---------------------------  SUB MENÚS ----------------------------------------
+
     /**
      * Añade un elemento nuevo a la revista.
+     * Muestra el menú de opciones (Portada, Carta, 5 tipos de artículos, Anuncio)
+     * y pide los datos  según la opción, 0 para cancelar.
      *
      * @param revista revista en edición.
      */
     private static void anadirElemento(Revista revista) {
         mostrarMenuAnadir();
-        int opcion = EntradaRevista.leerEnteroPositivo("Qué quieres añadir:");
+        int opcion = EntradaRevista.leerOpcionMenuConCancelacion("Qué quieres añadir", 7);
+        if (opcion == 0) return;
 
         switch (opcion) {
         case 1:
@@ -170,13 +151,16 @@ public class Main {
     }
 
     /**
-     * Edita un elemento existente.
+     * Edita un elemento existente en la revista.
+     * Muestra el menú de opciones (Portada, Carta, Artículo, Anuncio)
+     * y reemplaza el elemento seleccionado con nuevos datos, 0 para cancelar.
      *
      * @param revista revista en edición.
      */
     private static void editarElemento(Revista revista) {
         mostrarMenuEditar();
-        int opcion = EntradaRevista.leerEnteroPositivo("Qué quieres editar:");
+        int opcion = EntradaRevista.leerOpcionMenuConCancelacion("Qué quieres editar", 4);
+        if (opcion == 0) return;
 
         switch (opcion) {
         case 1:
@@ -205,13 +189,16 @@ public class Main {
     }
 
     /**
-     * Borra un elemento existente.
+     * Borra un elemento existente de la revista.
+     * Muestra el menú de opciones (Portada, Carta, Artículo, Anuncio)
+     * y elimina el elemento seleccionado, 0 para cancelar. 
      *
      * @param revista revista en edición.
      */
     private static void borrarElemento(Revista revista) {
         mostrarMenuBorrar();
-        int opcion = EntradaRevista.leerEnteroPositivo("Qué quieres borrar:");
+        int opcion = EntradaRevista.leerOpcionMenuConCancelacion("Qué quieres borrar", 4);
+        if (opcion == 0) return;
 
         switch (opcion) {
         case 1:
@@ -232,7 +219,8 @@ public class Main {
     }
 
     /**
-     * Muestra el contenido actual de la revista.
+     * Muestra en consola el contenido de la revista.
+     * Muestra Portada, Carta del Editor, lista de artículos y lista de anuncios.
      *
      * @param revista revista a mostrar.
      */
@@ -242,33 +230,55 @@ public class Main {
         System.out.println("Carta: " + (revista.getCartaEditor() == null ? "(sin carta)" : revista.getCartaEditor()));
 
         System.out.println("\n-- Artículos --");
-        ArrayList<Articulo> articulos = new ArrayList<>(revista.getArticulos());
+        List<Articulo> articulos = revista.getArticulos();
         if (articulos.isEmpty()) {
             System.out.println("(sin artículos)");
         } else {
-            for (int indice = 0; indice < articulos.size(); indice++) {
-                System.out.println((indice + 1) + ") " + articulos.get(indice));
-            }
+            EntradaRevista.listarArticulos(articulos);
         }
 
         System.out.println("\n-- Anuncios --");
-        ArrayList<Anuncio> anuncios = new ArrayList<>(revista.getAnuncios());
+        List<Anuncio> anuncios = revista.getAnuncios();
         if (anuncios.isEmpty()) {
             System.out.println("(sin anuncios)");
         } else {
-            for (int indice = 0; indice < anuncios.size(); indice++) {
-                System.out.println((indice + 1) + ") " + anuncios.get(indice));
-            }
+            EntradaRevista.listarAnuncios(anuncios);
+        }
+    }
+
+//--------------------------- FIN DE TODOS LOS MENÚS ----------------------------------------
+
+// -------------------------- METODOS PARA EL CRUD ---------------------------------------
+
+    /**
+     * Valida la revista antes de publicar usando ValidadorRevista.
+     * Si la validación es correcta, guarda la revista como publicada,
+     * y recalcula las páginas.
+     *
+     * @param revista Revista a validar.
+     */
+    private static void validarYPublicar(Revista revista) {
+        try {
+            ValidadorRevista.validarRevistaListaParaPublicar(revista);
+            System.out.println("La revista está lista para publicarse.");
+            GestorArchivos.guardarRevistaSimple(revista);
+        } catch (MinimosNoCumplidosException | MaximosSuperadosException | LimitePaginasException e) {
+            System.out.println("No se puede publicar: " + e.getMessage());
+            System.out.println("Resumen de faltantes:\n" + ValidadorRevista.getResumenFaltantes(revista));
+        } catch (IllegalArgumentException e) {
+            System.out.println("Error en la validación: " + e.getMessage());
         }
     }
 
     /**
-     * Edita un artículo buscandolo por posición.
+     * Edita un artículo seleccionado por su posición.
+     * Detecta el tipo de artículo (Entrevista, Reportaje, etc) pide los datos, 
+     * y recalcula las páginas.
      *
      * @param revista revista en edición.
      */
     private static void editarArticulo(Revista revista) {
-        ArrayList<Articulo> articulos = new ArrayList<>(revista.getArticulos());
+        List<Articulo> articulos = revista.getArticulos();
         if (articulos.isEmpty()) {
             System.out.println("No hay artículos.");
             return;
@@ -298,12 +308,14 @@ public class Main {
     }
 
     /**
-     * Borra un artículo buscandolo por posición.
+     * Borra un artículo seleccionado por su posición.
+     * Muestra la lista de artículos y pide al usuario que seleccione cuál borrar 
+     * y recalcula las páginas.
      *
      * @param revista revista en edición.
      */
     private static void borrarArticulo(Revista revista) {
-        ArrayList<Articulo> articulos = new ArrayList<>(revista.getArticulos());
+        List<Articulo> articulos = revista.getArticulos();
         if (articulos.isEmpty()) {
             System.out.println("No hay artículos.");
             return;
@@ -313,17 +325,19 @@ public class Main {
         int indice = EntradaRevista.leerIndice("Número de artículo a borrar:", articulos.size());
         if (indice != -1) {
             revista.getArticulos().remove(indice);
-            revista.recalcularPaginas();
+                revista.recalcularPaginas();
         }
     }
 
     /**
-     * Edita un anuncio buscandolo por posición.
+     * Edita un anuncio seleccionado por su posición.
+     * Muestra la lista de anuncios, pide los nuevos datos, 
+     * y recalcula las páginas.
      *
      * @param revista revista en edición.
      */
     private static void editarAnuncio(Revista revista) {
-        ArrayList<Anuncio> anuncios = new ArrayList<>(revista.getAnuncios());
+        List<Anuncio> anuncios = revista.getAnuncios();
         if (anuncios.isEmpty()) {
             System.out.println("No hay anuncios.");
             return;
@@ -338,8 +352,10 @@ public class Main {
     }
 
     /**
-     * Borra un anuncio buscandolo por posición.
-     *
+     * Borra un anuncio seleccionado por posición.
+     * Muestra la lista de anuncios y pide al usuario que seleccione cuál borrar.
+     * y recalcula las páginas.
+     * 
      * @param revista revista en edición.
      */
     private static void borrarAnuncio(Revista revista) {
@@ -358,94 +374,23 @@ public class Main {
     }
 
     /**
-     * Guarda la revista en un archivo txt (revista.txt)
-     *
-     * @param revista revista que se quiere guardar.
+     * Borra todo el contenido de la revista.
+     * Requiere confirmación del usuario por si acaso.
+     * 
+     * @param revista revista a vaciar.
      */
-    private static void guardarRevista(Revista revista) {
-        guardarRevistaSerializada(revista);
-        try (BufferedWriter escritor = Files.newBufferedWriter(ARCHIVO_DATOS)) {
-            escritor.write("REVISTA");
-            escritor.newLine();
-            escritor.write("Portada: " + (revista.getPortada() == null ? "(sin portada)" : revista.getPortada()));
-            escritor.newLine();
-            escritor.write("Carta: " + (revista.getCartaEditor() == null ? "(sin carta)" : revista.getCartaEditor()));
-            escritor.newLine();
-            escritor.write("Articulos:");
-            escritor.newLine();
-
-            for (Articulo articulo : revista.getArticulos()) {
-                escritor.write("- " + articulo);
-                escritor.newLine();
-            }
-            escritor.write("Anuncios:");
-            escritor.newLine();
-            for (Anuncio anuncio : revista.getAnuncios()) {
-                escritor.write("- " + anuncio);
-                escritor.newLine();
-            }
-        } catch (IOException e) {
-            System.out.println("Error guardando: " + e.getMessage());
+    private static void borrarTodo(Revista revista) {
+        String confirm = EntradaRevista.pedirLinea("¿Seguro que quieres BORRAR TODO el contenido? Escribe SI para confirmar:");
+        if (!"SI".equalsIgnoreCase(confirm.trim())) {
+            System.out.println("Operación cancelada.");
+            return;
         }
-    }
-
-    private static void guardarRevistaSerializada(Revista revista) {
-        try (ObjectOutputStream salida = new ObjectOutputStream(
-                new BufferedOutputStream(Files.newOutputStream(ARCHIVO_SERIALIZADO)))) {
-            salida.writeObject(revista);
-        } catch (IOException e) {
-            System.out.println("Error guardando copia persistente: " + e.getMessage());
-        }
-    }
-
-    private static Revista cargarRevista() {
-        Revista revista = cargarRevistaSerializada();
-        if (revista != null) {
-            return revista;
-        }
-
-        return new Revista();
-    }
-
-    private static Revista cargarRevistaSerializada() {
-        if (!Files.exists(ARCHIVO_SERIALIZADO)) {
-            return null;
-        }
-
-        try (ObjectInputStream entrada = new ObjectInputStream(
-                new BufferedInputStream(Files.newInputStream(ARCHIVO_SERIALIZADO)))) {
-            Revista revista = (Revista) entrada.readObject();
-            ajustarContadores(revista);
-            return revista;
-            } catch (java.io.InvalidClassException e) {
-            try {
-                Files.deleteIfExists(ARCHIVO_SERIALIZADO);
-            } catch (IOException ignored) {
-                // Si no se puede borrar, se sobrescribirá al guardar.
-            }
-            System.out.println("La copia persistente anterior no es compatible y se ha descartado.");
-            return null;
-        } catch (IOException | ClassNotFoundException e) {
-            System.out.println("Error cargando copia persistente: " + e.getMessage());
-            return null;
-        }
-    }
-
-    private static void ajustarContadores(Revista revista) {
-        int maxIdArticulo = 0;
-        for (Articulo articulo : revista.getArticulos()) {
-            if (articulo.getId() > maxIdArticulo) {
-                maxIdArticulo = articulo.getId();
-            }
-        }
-        Articulo.ajustarContadorId(maxIdArticulo + 1);
-
-        int maxIdAnuncio = 0;
-        for (Anuncio anuncio : revista.getAnuncios()) {
-            if (anuncio.getId() > maxIdAnuncio) {
-                maxIdAnuncio = anuncio.getId();
-            }
-        }
-        Anuncio.ajustarContadorId(maxIdAnuncio + 1);
+        revista.setPortada(null);
+        revista.setCartaEditor(null);
+        revista.getArticulos().clear();
+        revista.getAnuncios().clear();
+        revista.recalcularPaginas();
+        GestorArchivos.guardarRevistaSimple(revista);
+        System.out.println("Contenido borrado y guardado.");
     }
 }
